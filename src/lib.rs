@@ -1,12 +1,11 @@
 mod utils;
 
-
-use serde::{Deserialize, Serialize};
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::prelude::*;
 use prio::client;
 use prio::encrypt;
 use prio::finite_field;
+use serde::{Deserialize, Serialize};
+use wasm_bindgen::prelude::*;
+use wasm_bindgen::prelude::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
