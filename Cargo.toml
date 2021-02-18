@@ -13,7 +13,8 @@ default = ["console_error_panic_hook"]
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 wasm-bindgen = {version = "0.2.69", features = ["serde-serialize"]}
-prio = "0.2.0"
+prio = { path = "../libprio-rs" }
+
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
