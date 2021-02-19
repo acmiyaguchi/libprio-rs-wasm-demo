@@ -9,9 +9,10 @@ use wasm_bindgen_test::*;
 wasm_bindgen_test_configure!(run_in_browser);
 
 #[wasm_bindgen_test]
-fn pass() {
+fn test_encode_simple() {
     let pub_key1 = "EpVlUydoH4LpYH9qbOzRHuGOeMGyJcVIBJkrDl7ZYEE=";
     let pub_key2 = "YkRYOPdAK7FJyD85MCvzDySXAZIGMTOoYuIfjVvWmdY=";
     let data_u32 = [0u32, 1, 0, 1, 1, 0, 0, 0, 1];
-    let _res = client_encode_simple(&data_u32, pub_key1, pub_key2);
+    let res = client_encode_simple(&data_u32, pub_key1, pub_key2);
+    assert!(res.is_object());
 }
