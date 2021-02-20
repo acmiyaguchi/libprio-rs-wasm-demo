@@ -6,16 +6,45 @@ use prio::finite_field;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
-// // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
-// // allocator.
-// #[cfg(feature = "wee_alloc")]
-// #[global_allocator]
-// static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+extern crate base64;
+extern crate ring;
+extern crate serde_json;
+
+use base64::encode;
+use ring::signature::KeyPair;
+use ring::{rand, signature};
+use serde_json::json;
+
+// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
+// allocator.
+#[cfg(feature = "wee_alloc")]
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[derive(Serialize, Deserialize)]
 pub struct ClientShares {
     pub a: Vec<u8>,
     pub b: Vec<u8>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Keypair {
+    pub private: String,
+    pub public: String,
+}
+
+/// Generated x25519 keypair
+#[wasm_bindgen]
+pub fn generate_keypair() -> JsValue {
+    let rng = rand::SystemRandom::new();
+    let pkcs8_bytes = signature::Ed25519KeyPair::generate_pkcs8(&rng).unwrap();
+    let key_pair = signature::Ed25519KeyPair::from_pkcs8(pkcs8_bytes.as_ref()).unwrap();
+    let peer_public_key_bytes = key_pair.public_key().as_ref();
+    let data = Keypair {
+        private: encode(&pkcs8_bytes).to_string(),
+        public: encode(&peer_public_key_bytes).to_string(),
+    };
+    JsValue::from_serde(&data).unwrap()
 }
 
 #[wasm_bindgen]
