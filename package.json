@@ -19,6 +19,7 @@
     "svelte": "^3.0.0"
   },
   "dependencies": {
+    "base64-js": "^1.5.1",
     "libprio-wasm": "file:./libprio-wasm/pkg",
     "sirv-cli": "^1.0.0"
   }

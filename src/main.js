@@ -1,8 +1,12 @@
 import App from "./App.svelte";
+import wasm from "../libprio-wasm/Cargo.toml";
 
-const app = new App({
-  target: document.body,
-  props: {},
-});
+let init = async () =>
+  new App({
+    target: document.body,
+    props: {
+      libprio: await wasm(),
+    },
+  });
 
-export default app;
+init();

@@ -9,12 +9,12 @@ use serde_json::json;
 
 fn main() {
     let rng = rand::SystemRandom::new();
-    let pkcs8_bytes = signature::Ed25519KeyPair::generate_pkcs8(&rng).unwrap();
-    let key_pair = signature::Ed25519KeyPair::from_pkcs8(pkcs8_bytes.as_ref()).unwrap();
+    let seed: [u8; 32] = rand::generate(&rng).unwrap().expose();
+    let key_pair = signature::Ed25519KeyPair::from_seed_unchecked(&seed).unwrap();
     let peer_public_key_bytes = key_pair.public_key().as_ref();
     let data = json!({
-        "private": encode(&pkcs8_bytes),
-        "public": encode(&peer_public_key_bytes)
+        "seed": encode(seed).to_string(),
+        "public": encode(&peer_public_key_bytes).to_string(),
     });
     println!("{}", data);
 }
