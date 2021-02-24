@@ -1,0 +1,6 @@
+[submodule "external/libprio-rs"]
+	path = external/libprio-rs
+	url = git@github.com:acmiyaguchi/libprio-rs.git
+[submodule "external/ring"]
+	path = external/ring
+	url = git@github.com:acmiyaguchi/ring.git
