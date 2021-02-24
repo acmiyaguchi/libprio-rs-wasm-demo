@@ -15,19 +15,22 @@
 		keypair_a.public,
 		keypair_b.public
 	);
-	$: encodedA = base64js.fromByteArray(encoded.a);
-	$: encodedB = base64js.fromByteArray(encoded.b);
 	$: server_a = new libprio.Server(dimension, true, keypair_a.private);
 	$: server_b = new libprio.Server(dimension, false, keypair_b.private);
 	$: eval_at = server_a.choose_eval_at();
 	$: verifyA = server_a.generate_verification_message(
 		eval_at,
-		base64js.toByteArray(encodedA)
+		new Uint8Array(encoded.a)
 	);
 	$: verifyB = server_b.generate_verification_message(
 		eval_at,
-		base64js.toByteArray(encodedB)
+		new Uint8Array(encoded.b)
 	);
+	$: server_a.aggregate(new Uint8Array(encoded.a), verifyA, verifyB);
+	$: server_b.aggregate(new Uint8Array(encoded.b), verifyB, verifyA);
+	$: shareA = server_a.total_shares();
+	$: shareB = server_b.total_shares();
+	$: reconstructed = libprio.reconstruct_shares(shareA, shareB);
 </script>
 
 <style>
@@ -70,22 +73,26 @@
 		<a
 			href="https://github.com/abetterinternet/libprio-rs">abetterinternet/libprio-rs</a>
 		for the source library that has been compiled to wasm32-unknown-unknown.
+		See the
+		<a href="https://github.com/acmiyaguchi/libprio-rs-wasm-demo">source for
+			this page on Github.</a>
 	</p>
 
 	<h2>Keys</h2>
 	<p>
-		The keys are generated via X25519 instead of the original ECDH P-256
-		algorithm because the underlying cryptography library (ring) does not
-		support the latter on wasm32 targets. Keys are base64-encoded DER keys.
-		OpenSSL has difficulty generating keys that are compatible with this
-		library.
+		The private key is the "private scalar" derived from a random seed. This
+		value is used as a deterministic seed in the key-exchange protocol i.e.
+		ECIES with a X9.63 key derivation function and AES-GCM for symmetric
+		encryption. The public key is derived from the private scalar. The keys
+		are base64-encoded. This should be cleaned up to match the original
+		library, which appends the public key to the private key to avoid extra
+		work.
 	</p>
 
 	<p>
-		The private key is the "private scalar" derived from a random seed. This
-		value is used as a deterministic seed in the key-exchange protocol i.e.
-		IECES with a X9.63 key derivation function and AES-GCM for symmetric
-		encryption.
+		X25519 is used over ECDSA P-256 algorithm because the underlying
+		cryptography library (ring) does not support the latter on wasm32
+		targets.
 	</p>
 
 	<h3>Server A</h3>
@@ -100,18 +107,26 @@
 	</label>
 	<label>Public Key <input bind:value={keypair_b.public} readonly /> </label>
 
-	<h2>Client Encode Simple</h2>
+	<h2>Client Encoding</h2>
+
+	<p>
+		Only bit-vector encodings are supported by libprio-rs at the time of
+		writing. Prio can support a variety of aggregatable functions including
+		linear regression and count-min.
+	</p>
 
 	<h3>Original Data</h3>
 	<textarea bind:value={data} readonly />
 
 	<h3>Shares for server A</h3>
 	<p>{encoded.a.length} bytes</p>
-	<textarea bind:value={encodedA} readonly />
+	<textarea bind:value={encoded.a} readonly />
+	<textarea readonly>{base64js.fromByteArray(encoded.a)}</textarea>
 
 	<h3>Shares for server B</h3>
 	<p>{encoded.b.length} bytes</p>
-	<textarea bind:value={encodedB} readonly />
+	<textarea bind:value={encoded.b} readonly />
+	<textarea readonly>{base64js.fromByteArray(encoded.b)}</textarea>
 
 	<h2>Server Verification</h2>
 	<h3>Polynomial for evaluation (chosen by server A)</h3>
@@ -122,4 +137,16 @@
 
 	<h3>Verification for server B</h3>
 	<pre>{JSON.stringify(verifyB, '', 2)}</pre>
+
+	<h2>Reconstruction</h2>
+
+	<h3>Total shares for server A</h3>
+	<pre>{JSON.stringify(shareA, '', 2)}</pre>
+
+	<h3>Total shares for server B</h3>
+	<pre>{JSON.stringify(shareB, '', 2)}</pre>
+
+	<h3>Reconstructed value</h3>
+	<p>{reconstructed.length} bytes</p>
+	<textarea bind:value={reconstructed} readonly />
 </main>

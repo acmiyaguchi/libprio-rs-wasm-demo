@@ -4,6 +4,7 @@ use prio::client;
 use prio::encrypt;
 use prio::finite_field;
 use prio::server;
+use prio::util;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
@@ -125,8 +126,25 @@ impl Server {
         console_log!("{:?}", verification);
         JsValue::from_serde(&verification).unwrap()
     }
+
+    pub fn aggregate(&mut self, share: &[u8], v1: &JsValue, v2: &JsValue) -> JsValue {
+        set_panic_hook();
+        let v1: server::VerificationMessage = v1.into_serde().unwrap();
+        let v2: server::VerificationMessage = v2.into_serde().unwrap();
+        JsValue::from_serde(&self.this.aggregate(&share, &v1, &v2).unwrap()).unwrap()
+    }
+
+    pub fn total_shares(&self) -> JsValue {
+        set_panic_hook();
+        JsValue::from_serde(&self.this.total_shares()).unwrap()
+    }
 }
 
-// aggregate
-// total_shares
-// reconstruct_shares
+#[wasm_bindgen]
+pub fn reconstruct_shares(share1: &JsValue, share2: &JsValue) -> JsValue {
+    set_panic_hook();
+    let share1: Vec<finite_field::Field> = share1.into_serde().unwrap();
+    let share2: Vec<finite_field::Field> = share2.into_serde().unwrap();
+    JsValue::from_serde(&util::reconstruct_shares(share1.as_ref(), share2.as_ref()).unwrap())
+        .unwrap()
+}
