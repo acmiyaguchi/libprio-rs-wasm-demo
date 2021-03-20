@@ -145,6 +145,10 @@ pub fn reconstruct_shares(share1: &JsValue, share2: &JsValue) -> JsValue {
     set_panic_hook();
     let share1: Vec<finite_field::Field> = share1.into_serde().unwrap();
     let share2: Vec<finite_field::Field> = share2.into_serde().unwrap();
-    JsValue::from_serde(&util::reconstruct_shares(share1.as_ref(), share2.as_ref()).unwrap())
+    let reconstructed: Vec<u32> = util::reconstruct_shares(share1.as_ref(), share2.as_ref())
         .unwrap()
+        .iter()
+        .map(|el| u32::from(*el))
+        .collect();
+    JsValue::from_serde(&reconstructed).unwrap()
 }
