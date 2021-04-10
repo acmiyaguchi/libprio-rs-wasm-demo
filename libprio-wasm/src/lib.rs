@@ -2,7 +2,7 @@ mod utils;
 
 use prio::client;
 use prio::encrypt;
-use prio::finite_field;
+use prio::field::Field32;
 use prio::server;
 use prio::util;
 use serde::{Deserialize, Serialize};
@@ -72,7 +72,7 @@ pub fn generate_keypair() -> JsValue {
     .unwrap();
     let public_key = private_key.compute_public_key().unwrap();
     let data = Keypair {
-        private: encode(&private_scalar).to_string(),
+        private: encode([public_key.as_ref(), private_scalar].concat()).to_string(),
         public: encode(&public_key).to_string(),
     };
     JsValue::from_serde(&data).unwrap()
@@ -85,10 +85,10 @@ pub fn client_encode_simple(data: &[u32], public_key1: &str, public_key2: &str) 
 
     let data = data
         .iter()
-        .map(|x| finite_field::Field::from(*x))
-        .collect::<Vec<finite_field::Field>>();
+        .map(|x| Field32::from(*x))
+        .collect::<Vec<Field32>>();
     let encoded_shares = client::encode_simple(&data, pub_key1, pub_key2);
-    assert_eq!(encoded_shares.is_some(), true);
+    assert_eq!(encoded_shares.is_ok(), true);
     let (a, b) = encoded_shares.unwrap();
     let shares = ClientShares { a: a, b: b };
     JsValue::from_serde(&shares).unwrap()
@@ -96,7 +96,7 @@ pub fn client_encode_simple(data: &[u32], public_key1: &str, public_key2: &str) 
 
 #[wasm_bindgen]
 pub struct Server {
-    this: server::Server,
+    this: server::Server<Field32>,
 }
 
 #[wasm_bindgen]
@@ -104,6 +104,7 @@ impl Server {
     /// A wasm wrapper for the rust core
     #[wasm_bindgen(constructor)]
     pub fn new(dimension: usize, is_first_server: bool, private_key: &str) -> Self {
+        set_panic_hook();
         Server {
             this: server::Server::new(
                 dimension,
@@ -129,8 +130,8 @@ impl Server {
 
     pub fn aggregate(&mut self, share: &[u8], v1: &JsValue, v2: &JsValue) -> JsValue {
         set_panic_hook();
-        let v1: server::VerificationMessage = v1.into_serde().unwrap();
-        let v2: server::VerificationMessage = v2.into_serde().unwrap();
+        let v1: server::VerificationMessage<Field32> = v1.into_serde().unwrap();
+        let v2: server::VerificationMessage<Field32> = v2.into_serde().unwrap();
         JsValue::from_serde(&self.this.aggregate(&share, &v1, &v2).unwrap()).unwrap()
     }
 
@@ -143,8 +144,8 @@ impl Server {
 #[wasm_bindgen]
 pub fn reconstruct_shares(share1: &JsValue, share2: &JsValue) -> JsValue {
     set_panic_hook();
-    let share1: Vec<finite_field::Field> = share1.into_serde().unwrap();
-    let share2: Vec<finite_field::Field> = share2.into_serde().unwrap();
+    let share1: Vec<Field32> = share1.into_serde().unwrap();
+    let share2: Vec<Field32> = share2.into_serde().unwrap();
     let reconstructed: Vec<u32> = util::reconstruct_shares(share1.as_ref(), share2.as_ref())
         .unwrap()
         .iter()
