@@ -1,6 +1,6 @@
 [package]
 name = "libprio-wasm"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Anthony Miyaguchi <amiyaguchi@mozilla.com>"]
 edition = "2018"
 
