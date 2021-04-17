@@ -4,7 +4,7 @@ import resolve from "@rollup/plugin-node-resolve";
 import livereload from "rollup-plugin-livereload";
 import { terser } from "rollup-plugin-terser";
 import css from "rollup-plugin-css-only";
-// import { wasm } from "@rollup/plugin-wasm";
+import { wasm } from "@rollup/plugin-wasm";
 import rust from "@wasm-tool/rollup-plugin-rust";
 
 const production = !process.env.ROLLUP_WATCH;
@@ -63,7 +63,7 @@ export default {
       dedupe: ["svelte"],
     }),
     commonjs(),
-    // wasm(),
+    wasm(),
     rust({
       verbose: true,
       serverPath: "/build/",
