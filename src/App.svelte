@@ -103,7 +103,7 @@
 
 	<h3>Server B</h3>
 	<label>Private Key
-		<input bind:value={keypair_a.private} readonly />
+		<input bind:value={keypair_b.private} readonly />
 	</label>
 	<label>Public Key <input bind:value={keypair_b.public} readonly /> </label>
 
@@ -119,14 +119,22 @@
 	<textarea bind:value={data} readonly />
 
 	<h3>Shares for server A</h3>
+	<h4>encrypted share</h4>
 	<p>{encoded.a.length} bytes</p>
 	<textarea bind:value={encoded.a} readonly />
 	<textarea readonly>{base64js.fromByteArray(encoded.a)}</textarea>
+	<h4>decrypted share</h4>
+	<textarea
+		readonly>{base64js.fromByteArray(libprio.decrypt_share(encoded.a, keypair_a.private))}</textarea>
 
 	<h3>Shares for server B</h3>
+	<h4>encrypted share</h4>
 	<p>{encoded.b.length} bytes</p>
 	<textarea bind:value={encoded.b} readonly />
 	<textarea readonly>{base64js.fromByteArray(encoded.b)}</textarea>
+	<h4>decrypted share</h4>
+	<textarea
+		readonly>{base64js.fromByteArray(libprio.decrypt_share(encoded.b, keypair_b.private))}</textarea>
 
 	<h2>Server Verification</h2>
 	<h3>Polynomial for evaluation (chosen by server A)</h3>

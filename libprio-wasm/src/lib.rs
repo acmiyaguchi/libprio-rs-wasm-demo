@@ -95,6 +95,17 @@ pub fn client_encode_simple(data: &[u32], public_key1: &str, public_key2: &str) 
 }
 
 #[wasm_bindgen]
+pub fn decrypt_share(data: &[u8], key: &str) -> JsValue {
+    set_panic_hook();
+    JsValue::from_serde(
+        &encrypt::decrypt_share(data, &encrypt::PrivateKey::from_base64(key).unwrap())
+            .ok()
+            .unwrap(),
+    )
+    .unwrap()
+}
+
+#[wasm_bindgen]
 pub struct Server {
     this: server::Server<Field32>,
 }
