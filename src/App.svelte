@@ -1,5 +1,6 @@
 <script>
 	import base64js from "base64-js";
+	import "bootstrap/dist/css/bootstrap.min.css";
 
 	// allow the component to be completely reactive by resolving the wasm module
 	// before passing it to the component
@@ -95,17 +96,26 @@
 		targets.
 	</p>
 
-	<h3>Server A</h3>
-	<label>Private Key
-		<input bind:value={keypair_a.private} readonly />
-	</label>
-	<label>Public Key <input bind:value={keypair_a.public} readonly /> </label>
-
-	<h3>Server B</h3>
-	<label>Private Key
-		<input bind:value={keypair_b.private} readonly />
-	</label>
-	<label>Public Key <input bind:value={keypair_b.public} readonly /> </label>
+	<div class="row">
+		<div class="col-sm">
+			<h3>Server A</h3>
+			<label>Private Key
+				<input bind:value={keypair_a.private} readonly />
+			</label>
+			<label>Public Key
+				<input bind:value={keypair_a.public} readonly />
+			</label>
+		</div>
+		<div class="col-sm">
+			<h3>Server B</h3>
+			<label>Private Key
+				<input bind:value={keypair_b.private} readonly />
+			</label>
+			<label>Public Key
+				<input bind:value={keypair_b.public} readonly />
+			</label>
+		</div>
+	</div>
 
 	<h2>Client Encoding</h2>
 
@@ -118,41 +128,56 @@
 	<h3>Original Data</h3>
 	<textarea bind:value={data} readonly />
 
-	<h3>Shares for server A</h3>
-	<h4>encrypted share</h4>
-	<p>{encoded.a.length} bytes</p>
-	<textarea bind:value={encoded.a} readonly />
-	<textarea readonly>{base64js.fromByteArray(encoded.a)}</textarea>
-	<h4>decrypted share</h4>
-	<textarea
-		readonly>{base64js.fromByteArray(libprio.decrypt_share(encoded.a, keypair_a.private))}</textarea>
-
-	<h3>Shares for server B</h3>
-	<h4>encrypted share</h4>
-	<p>{encoded.b.length} bytes</p>
-	<textarea bind:value={encoded.b} readonly />
-	<textarea readonly>{base64js.fromByteArray(encoded.b)}</textarea>
-	<h4>decrypted share</h4>
-	<textarea
-		readonly>{base64js.fromByteArray(libprio.decrypt_share(encoded.b, keypair_b.private))}</textarea>
+	<div class="row">
+		<div class="col-sm">
+			<h3>Shares for server A</h3>
+			<h4>encrypted share</h4>
+			<p>{encoded.a.length} bytes</p>
+			<textarea bind:value={encoded.a} readonly />
+			<textarea readonly>{base64js.fromByteArray(encoded.a)}</textarea>
+			<h4>decrypted share</h4>
+			<textarea
+				readonly>{base64js.fromByteArray(libprio.decrypt_share(encoded.a, keypair_a.private))}</textarea>
+		</div>
+		<div class="col-sm">
+			<h3>Shares for server B</h3>
+			<h4>encrypted share</h4>
+			<p>{encoded.b.length} bytes</p>
+			<textarea bind:value={encoded.b} readonly />
+			<textarea readonly>{base64js.fromByteArray(encoded.b)}</textarea>
+			<h4>decrypted share</h4>
+			<textarea
+				readonly>{base64js.fromByteArray(libprio.decrypt_share(encoded.b, keypair_b.private))}</textarea>
+		</div>
+	</div>
 
 	<h2>Server Verification</h2>
 	<h3>Polynomial for evaluation (chosen by server A)</h3>
 	{server_a.choose_eval_at()}
 
-	<h3>Verification for server A</h3>
-	<pre>{JSON.stringify(verifyA, '', 2)}</pre>
-
-	<h3>Verification for server B</h3>
-	<pre>{JSON.stringify(verifyB, '', 2)}</pre>
+	<div class="row">
+		<div class="col-sm">
+			<h3>Verification for server A</h3>
+			<pre>{JSON.stringify(verifyA, '', 2)}</pre>
+		</div>
+		<div class="col-sm">
+			<h3>Verification for server B</h3>
+			<pre>{JSON.stringify(verifyB, '', 2)}</pre>
+		</div>
+	</div>
 
 	<h2>Reconstruction</h2>
 
-	<h3>Total shares for server A</h3>
-	<pre>{JSON.stringify(shareA, '', 2)}</pre>
-
-	<h3>Total shares for server B</h3>
-	<pre>{JSON.stringify(shareB, '', 2)}</pre>
+	<div class="row">
+		<div class="col-sm">
+			<h3>Total shares for server A</h3>
+			<pre>{JSON.stringify(shareA, '', 2)}</pre>
+		</div>
+		<div class="col-sm">
+			<h3>Total shares for server B</h3>
+			<pre>{JSON.stringify(shareB, '', 2)}</pre>
+		</div>
+	</div>
 
 	<h3>Reconstructed value</h3>
 	<p>{reconstructed.length} bytes</p>
