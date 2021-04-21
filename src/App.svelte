@@ -108,11 +108,11 @@
       <textarea bind:value={encoded.a} readonly />
       <textarea readonly>{base64js.fromByteArray(encoded.a)}</textarea>
       <h4>decrypted share</h4>
-      <textarea readonly
-        >{base64js.fromByteArray(
+      <textarea readonly>
+        {base64js.fromByteArray(
           libprio.decrypt_share(encoded.a, keypair_a.private)
-        )}</textarea
-      >
+        )}
+      </textarea>
     </div>
     <div class="col-sm">
       <h3>Shares for server B</h3>
@@ -121,11 +121,11 @@
       <textarea bind:value={encoded.b} readonly />
       <textarea readonly>{base64js.fromByteArray(encoded.b)}</textarea>
       <h4>decrypted share</h4>
-      <textarea readonly
-        >{base64js.fromByteArray(
+      <textarea readonly>
+        {base64js.fromByteArray(
           libprio.decrypt_share(encoded.b, keypair_b.private)
-        )}</textarea
-      >
+        )}
+      </textarea>
     </div>
   </div>
 
