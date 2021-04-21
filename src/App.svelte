@@ -54,17 +54,16 @@
 
   <h2>Keys</h2>
   <p>
-    The private key is the "private scalar" derived from a random seed. This
-    value is used as a deterministic seed in the key-exchange protocol i.e.
-    ECIES with a X9.63 key derivation function and AES-GCM for symmetric
-    encryption. The public key is derived from the private scalar. The keys are
-    base64-encoded. This should be cleaned up to match the original library,
-    which appends the public key to the private key to avoid extra work.
+    The private key is the concatenation of the public key with the "private
+    scalar" derived from a random seed. The public key is derived from the
+    private scalar. This value is used as a deterministic seed in the
+    key-exchange protocol i.e. ECIES with a X9.63 key derivation function and
+    AES-GCM for symmetric encryption.
   </p>
 
   <p>
-    X25519 is used over ECDSA P-256 algorithm because the underlying
-    cryptography library (ring) does not support the latter on wasm32 targets.
+    libprio-rs uses ECDSA P-256 for the key agreement algorithm in ring. In this
+    fork, we use X25519 to support the wasm32 target.
   </p>
 
   <div class="row">
