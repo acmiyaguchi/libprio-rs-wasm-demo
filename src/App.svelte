@@ -6,8 +6,11 @@
   // before passing it to the component
   export let libprio;
 
-  let data = [1, 1, 0, 1];
-  let dimension = 4;
+  let dimension = 16;
+
+  $: data = [...Array(dimension).keys()].map((i) =>
+    i % 3 == 0 || i % 5 == 0 ? 1 : 0
+  );
 
   $: keypair_a = libprio.generate_keypair();
   $: keypair_b = libprio.generate_keypair();
@@ -98,6 +101,10 @@
   </p>
 
   <h3>Original Data</h3>
+  <label
+    >dimension ({dimension})
+    <input type="range" min={1} max={256} bind:value={dimension} /></label
+  >
   <textarea bind:value={data} readonly />
 
   <div class="row">
