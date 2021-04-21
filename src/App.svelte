@@ -111,7 +111,6 @@
       <h3>Shares for server A</h3>
       <h4>encrypted share</h4>
       <p>{encoded.a.length} bytes</p>
-      <textarea bind:value={encoded.a} readonly />
       <textarea readonly>{base64js.fromByteArray(encoded.a)}</textarea>
       <h4>decrypted share</h4>
       <textarea readonly>
@@ -124,7 +123,6 @@
       <h3>Shares for server B</h3>
       <h4>encrypted share</h4>
       <p>{encoded.b.length} bytes</p>
-      <textarea bind:value={encoded.b} readonly />
       <textarea readonly>{base64js.fromByteArray(encoded.b)}</textarea>
       <h4>decrypted share</h4>
       <textarea readonly>
